@@ -250,7 +250,7 @@ function Logo() {
     <img
       src={rotativeGif}
       alt=""
-      style={{ height: "4.4em", width: "auto", flexShrink: 0, verticalAlign: "middle" }}
+      style={{ height: "2.2em", width: "auto", flexShrink: 0, verticalAlign: "middle" }}
     />
       {/* <span>OUT</span>
       <span className="logo-outline">THE</span>
