@@ -1,15 +1,17 @@
 import { defineConfig, type HtmlTagDescriptor, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
-
-import siteConfiguration from './.figma/make/site.json'
-
 
 // Vite config — https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // .figma/make/deploy-preview passes `--mode development` for cached-preview builds.
   const emitSourcemaps = mode === 'development'
+  const siteConfigurationPath = path.resolve(__dirname, '.figma/make/site.json')
+  const siteConfiguration: FigmaSiteConfiguration | undefined = existsSync(siteConfigurationPath)
+    ? JSON.parse(readFileSync(siteConfigurationPath, 'utf8'))
+    : undefined
 
   return {
     base: process.env.FIGMA_PUBLIC_URL ? `${process.env.FIGMA_PUBLIC_URL}/` : './',
@@ -18,9 +20,9 @@ export default defineConfig(({ mode }) => {
       minify: !emitSourcemaps,
     },
     plugins: [
-react(),
+      react(),
       tailwindcss(),
-      figmaSiteConfiguration(siteConfiguration),
+      siteConfiguration && figmaSiteConfiguration(siteConfiguration),
       figmaErrorOverlayReplay(),
       figmaReactRefreshBoundaryFallback(),
       figmaMakeKitPlugin({ storiesGlob: '/src/**/*.stories.{ts,tsx,js,jsx}' }),

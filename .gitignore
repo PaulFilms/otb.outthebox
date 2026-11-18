@@ -1,0 +1,6 @@
+.env
+.env.*
+!.env.example
+node_modules/
+/OTB Web/dist/
+/OTB Web/public/agenda/

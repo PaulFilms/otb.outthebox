@@ -16,9 +16,9 @@ pnpm dev
 
 ## GitHub Pages
 
-1. Sube el proyecto desde esta raíz, sin el archivo `.env`.
+1. Sube el proyecto desde esta raíz, sin el archivo `.env`. No hace falta subir `.figma`: Vite usa sus metadatos cuando están presentes y, si no, usa los de [index.html](./OTB%20Web/index.html).
 2. En **Settings → Pages**, elige **GitHub Actions** como origen.
-3. En **Settings → Secrets and variables → Actions**, crea la **variable** `SUPABASE_URL` y el **secreto** `SUPABASE_ANON_KEY`.
+3. En **Settings → Secrets and variables → Actions**, crea dos entradas a nivel de repositorio: en **Variables**, `SUPABASE_URL`; y en **Secrets**, `SUPABASE_ANON_KEY`. Pega solo el valor de cada una, sin `NOMBRE=`, comillas ni un secreto llamado `.env`.
 4. Publica con un push a `main` o ejecuta **Publicar web en GitHub Pages** manualmente en **Actions**. Vuelve a ejecutar el workflow para incorporar cambios de Supabase sin modificar el código.
 
 La función de Supabase no admite el preflight CORS necesario para esta petición autenticada. Por eso se consulta durante la compilación: Pages sirve una copia estática de las fichas y no recibe la clave. Las imágenes de Notion admitidas se copian al compilar para no depender de URLs firmadas que caducan. Si no hay imagen disponible se muestra una portada tipográfica de OTB. La Agenda es pública: publica en el origen solo eventos que puedan aparecer en la web.
