@@ -247,7 +247,11 @@ function Logo() {
       type="button"
       aria-label="OTB — inicio"
     >
-      <img src={rotativeGif} alt="" style={{ height: "4.4em", verticalAlign: "middle" }} />
+    <img
+      src={rotativeGif}
+      alt=""
+      style={{ height: "4.4em", width: "auto", flexShrink: 0, verticalAlign: "middle" }}
+    />
       {/* <span>OUT</span>
       <span className="logo-outline">THE</span>
       <span>BOX</span> */}
