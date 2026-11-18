@@ -11,6 +11,41 @@ const providers: Record<string, { name: string; path: RegExp; height: number }> 
     path: /^\/embed\/(?:album|artist|episode|playlist|show|track)\/[a-zA-Z0-9]+\/?$/,
     height: 352,
   },
+  "player-widget.mixcloud.com": {
+    name: "Mixcloud",
+    path: /^\/widget\/iframe\/?$/,
+    height: 130,
+  },
+  "w.soundcloud.com": {
+    name: "SoundCloud",
+    path: /^\/player\/?$/,
+    height: 166,
+  },
+  "bandcamp.com": {
+    name: "Bandcamp",
+    path: /^\/EmbeddedPlayer\/(?:album|track)=\d+(?:\/[^/]+)*\/?$/,
+    height: 120,
+  },
+  "www.bandlab.com": {
+    name: "BandLab",
+    path: /^\/embed\/?$/,
+    height: 202,
+  },
+  "bandlab.com": {
+    name: "BandLab",
+    path: /^\/embed\/?$/,
+    height: 202,
+  },
+  "widget.deezer.com": {
+    name: "Deezer",
+    path: /^\/widget\/(?:auto|dark|light)\/(?:album|artist|episode|playlist|show|track)\/\d+\/?$/,
+    height: 300,
+  },
+  "player.vimeo.com": {
+    name: "Vimeo",
+    path: /^\/video\/\d+\/?$/,
+    height: 360,
+  },
   "www.youtube-nocookie.com": {
     name: "YouTube",
     path: /^\/embed\/(?:[a-zA-Z0-9_-]{11}|videoseries)\/?$/,

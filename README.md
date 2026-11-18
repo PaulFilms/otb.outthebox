@@ -6,7 +6,7 @@ El acceso está desactivado. Los prototipos de Espacios y Contacto no aparecen e
 
 ## Reproductores en Notion
 
-Usa **Compartir → Insertar** en Apple Music, Spotify o YouTube y pega solo el `<iframe>…</iframe>` en un bloque de código de Notion con el lenguaje **HTML**. La ficha genera su propio iframe: utiliza la URL HTTPS de inserción y la altura del original, pero no aplica atributos HTML de Notion como `style`, `allow` o `sandbox`. Un reproductor no admitido muestra un aviso; el resto del HTML no se ejecuta. Para otros servicios, usa un enlace normal en el texto.
+Usa la opción **Compartir → Insertar** (o equivalente) en Apple Music, Spotify, Mixcloud, SoundCloud, Bandcamp, BandLab, Deezer, YouTube o Vimeo. Pega solo el `<iframe>…</iframe>` oficial en un bloque de código de Notion con el lenguaje **HTML**, sin el código envolvente. La ficha genera su propio iframe: utiliza la URL HTTPS de inserción y la altura del original, pero no aplica atributos HTML de Notion como `style`, `allow` o `sandbox`. Un reproductor no admitido muestra un aviso; el resto del HTML no se ejecuta. Para otros servicios, usa un enlace normal en el texto.
 
 ## Desarrollo local
 
