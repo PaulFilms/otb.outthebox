@@ -17,6 +17,7 @@ const imageTypes = new Map([
   ["image/gif", "gif"],
 ])
 const markdown = remark().use(remarkGfm)
+const agendaTypes = new Set(["EVENTO", "LANZAMIENTO", "OPINION"])
 
 function httpsUrl(value) {
   const url = typeof value === "string" ? URL.parse(value) : null
@@ -127,7 +128,7 @@ async function syncAgenda() {
   const imageCache = new Map()
   const currentImages = new Set()
   for (const entry of data.entradas) {
-    if (entry?.tipo !== "EVENTO" && entry?.tipo !== "LANZAMIENTO") continue
+    if (!agendaTypes.has(entry?.tipo)) continue
     if (typeof entry.id !== "string" || typeof entry.nombre !== "string" || !entry.nombre.trim()) {
       throw new Error("Supabase devolvió una entrada sin identificador o título.")
     }

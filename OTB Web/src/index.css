@@ -376,6 +376,11 @@ a {
   --cover-ink: #11110f;
 }
 
+[data-tone='opinion'] {
+  --entry-accent: var(--muted);
+  --cover-ink: var(--bg);
+}
+
 .editorial-card {
   min-height: 244px;
   border-bottom: 1px solid var(--line);

@@ -1,6 +1,6 @@
 # OUT THE BOX
 
-La web usa el diseño exportado de Figma Make en [OTB Web](./OTB%20Web). La Agenda consulta la función `notion_entradas` de Supabase con la misma petición que [supa_test.js](./supa_test.js), publica las entradas `EVENTO` (rojo) y `LANZAMIENTO` (azul) y las ordena de la fecha más reciente a la más antigua. El título, la fecha y la flecha de cada tarjeta abren la ficha `/evento/?id=…`, donde se muestra el contenido Markdown con sus imágenes y enlaces.
+La web usa el diseño exportado de Figma Make en [OTB Web](./OTB%20Web). La Agenda consulta la función `notion_entradas` de Supabase con la misma petición que [supa_test.js](./supa_test.js), publica las entradas `EVENTO` (rojo), `LANZAMIENTO` (azul) y `OPINION` (gris, con etiqueta «OPINIÓN») en una sola lista ordenada de la fecha más reciente a la más antigua. El título, la fecha y la flecha de cada tarjeta abren la ficha `/evento/?id=…`, donde se muestra el contenido Markdown con sus imágenes y enlaces.
 
 El acceso está desactivado. Los prototipos de Espacios y Contacto no aparecen en la navegación; para depurarlos, abre `/?seccion=espacios` o `/?seccion=contacto` en la raíz de la web.
 

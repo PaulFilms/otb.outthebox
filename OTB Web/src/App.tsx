@@ -14,9 +14,17 @@ const spaceImages = [
 
 type EventImage = { src: string; alt: string }
 
+const entryPresentation = {
+  EVENTO: { label: "EVENTO", tone: undefined },
+  LANZAMIENTO: { label: "LANZAMIENTO", tone: "release" },
+  OPINION: { label: "OPINIÓN", tone: "opinion" },
+} as const
+
+type EntryType = keyof typeof entryPresentation
+
 type AgendaEvent = {
   id: string
-  type: "EVENTO" | "LANZAMIENTO"
+  type?: EntryType
   title: string
   description: string
   date: string | null
@@ -296,7 +304,7 @@ type EditorialCardProps = {
   titleHref?: string
   description: string
   footer: ReactNode
-  tone?: "release"
+  tone?: (typeof entryPresentation)[EntryType]["tone"]
 }
 
 function EditorialCard({
@@ -420,7 +428,7 @@ function Agenda() {
       <PageIntro
         number="01"
         title="Agenda"
-        text="Eventos y lanzamientos con propuestas no-mainstream y una visión diferente."
+        text="Eventos, lanzamientos y artículos de opinión con propuestas no-mainstream y una visión diferente."
       />
       <div className="card-list">
         {agenda.status === "loading" && (
@@ -438,10 +446,10 @@ function Agenda() {
             description={event.description}
             image={event.cover ? eventImageSrc(event.cover) : undefined}
             key={event.id}
-            kicker={event.type === "LANZAMIENTO" ? "LANZAMIENTO" : "EVENTO"}
+            kicker={entryPresentation[event.type ?? "EVENTO"].label}
             title={event.title}
             titleHref={eventHref(event.id)}
-            tone={event.type === "LANZAMIENTO" ? "release" : undefined}
+            tone={entryPresentation[event.type ?? "EVENTO"].tone}
             footer={
               <>
                 <a className="entry-link" href={eventHref(event.id)}>
@@ -483,9 +491,9 @@ function EventDetail() {
         <h1 className="event-title">Entrada no encontrada</h1>
       )}
       {event && (
-        <article className="event-article" data-tone={event.type === "LANZAMIENTO" ? "release" : undefined}>
+        <article className="event-article" data-tone={entryPresentation[event.type ?? "EVENTO"].tone}>
           <header className="event-heading">
-            <p className="eyebrow">{event.type === "LANZAMIENTO" ? "LANZAMIENTO" : "EVENTO"}</p>
+            <p className="eyebrow">{entryPresentation[event.type ?? "EVENTO"].label}</p>
             <h1 className="event-title">{event.title}</h1>
             <EventDate date={event.date} />
           </header>
