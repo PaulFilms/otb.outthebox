@@ -16,6 +16,12 @@ export default defineConfig(({ mode }) => {
   return {
     base: process.env.FIGMA_PUBLIC_URL ? `${process.env.FIGMA_PUBLIC_URL}/` : './',
     build: {
+      rolldownOptions: {
+        input: [
+          path.resolve(__dirname, 'index.html'),
+          path.resolve(__dirname, 'evento/index.html'),
+        ],
+      },
       sourcemap: emitSourcemaps ? 'inline' : false,
       minify: !emitSourcemaps,
     },

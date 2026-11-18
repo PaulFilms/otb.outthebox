@@ -266,6 +266,90 @@ a {
   color: var(--muted);
 }
 
+.event-page {
+  padding-top: clamp(32px, 6vw, 72px);
+}
+
+.event-back {
+  margin-bottom: clamp(32px, 5vw, 64px);
+}
+
+.event-back svg {
+  transform: rotate(180deg);
+}
+
+.event-article {
+  border-top: 1px solid var(--line);
+}
+
+.event-heading {
+  padding: clamp(24px, 5vw, 56px) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.event-title {
+  max-width: 20ch;
+  margin: 14px 0 20px;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(36px, 7vw, 92px);
+  letter-spacing: -.06em;
+  line-height: .96;
+  overflow-wrap: anywhere;
+}
+
+.event-content {
+  max-width: 72ch;
+  padding-top: clamp(24px, 5vw, 54px);
+  font-size: clamp(15px, 1.8vw, 18px);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.event-content > * + * {
+  margin-top: 1em;
+}
+
+.event-content :is(h2, h3, h4, h5, h6) {
+  font-weight: 700;
+  font-size: 1.25em;
+  line-height: 1.2;
+}
+
+.event-content a {
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+
+.event-content ul {
+  list-style: disc outside;
+}
+
+.event-content ol {
+  list-style: decimal outside;
+}
+
+.event-content :is(ul, ol) {
+  padding-inline-start: 1.5em;
+}
+
+.event-content blockquote {
+  border-inline-start: 3px solid var(--accent);
+  padding-inline-start: 1em;
+  color: var(--muted);
+}
+
+.event-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.event-content pre {
+  overflow-x: auto;
+  padding: .75em;
+  background: var(--surface);
+}
+
 .editorial-card {
   min-height: 244px;
   border-bottom: 1px solid var(--line);

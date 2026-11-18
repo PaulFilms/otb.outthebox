@@ -1,4 +1,6 @@
 import { type FormEvent, type ReactNode, useEffect, useState } from "react"
+import Markdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 
 type Page = "agenda" | "espacios" | "contacto"
 type IconProps = { size?: number; strokeWidth?: number }
@@ -9,20 +11,35 @@ const spaceImages = [
   "https://images.unsplash.com/photo-1612443016610-00c5fa0ec439?auto=format&fit=crop&w=900&q=85",
 ]
 
+type EventImage = { src: string; alt: string }
+
 type AgendaEvent = {
   id: string
   title: string
   description: string
   date: string | null
-  image: { filename: string; alt: string } | null
-  url: string | null
+  cover: EventImage | null
+  content: string
+  attachments: EventImage[]
 }
 
 type AgendaState =
   | { status: "loading" | "error" }
   | { status: "ready"; events: AgendaEvent[] }
 
-const agendaPath = `${import.meta.env.BASE_URL}agenda/`
+const isEventPage = document.getElementById("root")?.dataset.page === "evento"
+const siteRoot = new URL(isEventPage ? "../" : "./", window.location.href)
+const eventsUrl = new URL("agenda/events.json", siteRoot)
+
+function eventHref(id: string) {
+  const url = new URL("evento/", siteRoot)
+  url.searchParams.set("id", id)
+  return url.href
+}
+
+function eventImageSrc(image: EventImage) {
+  return new URL(image.src, siteRoot).href
+}
 const dateOnly = /^\d{4}-\d{2}-\d{2}$/
 const dateFormatter = new Intl.DateTimeFormat("es-ES", {
   day: "2-digit",
@@ -198,7 +215,10 @@ function Logo() {
   return (
     <button
       className="logo"
-      onClick={() => window.scrollTo({ behavior: "smooth", top: 0 })}
+      onClick={() => {
+        if (isEventPage) window.location.assign(siteRoot)
+        else window.scrollTo({ behavior: "smooth", top: 0 })
+      }}
       type="button"
       aria-label="OTB — inicio"
     >
@@ -305,6 +325,7 @@ function EditorialCard({
             className="card-image"
             loading="lazy"
             onError={() => setImageFailed(true)}
+            referrerPolicy="no-referrer"
             src={image}
           />
         ) : (
@@ -341,7 +362,7 @@ function PageIntro({
   )
 }
 
-function Agenda() {
+function useAgenda() {
   const [agenda, setAgenda] = useState<AgendaState>({ status: "loading" })
   const [attempt, setAttempt] = useState(0)
 
@@ -350,7 +371,7 @@ function Agenda() {
 
     async function loadEvents() {
       try {
-        const response = await fetch(`${agendaPath}events.json`, {
+        const response = await fetch(eventsUrl, {
           cache: "no-cache",
           signal: controller.signal,
         })
@@ -367,6 +388,38 @@ function Agenda() {
     return () => controller.abort()
   }, [attempt])
 
+  function retry() {
+    setAgenda({ status: "loading" })
+    setAttempt((previous) => previous + 1)
+  }
+
+  return { agenda, retry }
+}
+
+function AgendaError({ message, retry }: { message: string; retry: () => void }) {
+  return (
+    <div className="agenda-message">
+      <p role="alert">{message}</p>
+      <button className="text-button" onClick={retry} type="button">
+        Volver a intentar
+      </button>
+    </div>
+  )
+}
+
+function EventDate({ date }: { date: string | null }) {
+  if (!date) return <div className="date-block"><strong>FECHA POR CONFIRMAR</strong></div>
+  return (
+    <time className="date-block" dateTime={date}>
+      <strong>{dateFormatter.format(new Date(date)).toLocaleUpperCase("es-ES")}</strong>
+      {!dateOnly.test(date) && <span>{timeFormatter.format(new Date(date))} H</span>}
+    </time>
+  )
+}
+
+function Agenda() {
+  const { agenda, retry } = useAgenda()
+
   return (
     <main className="page-shell">
       <PageIntro
@@ -379,59 +432,90 @@ function Agenda() {
           <p className="agenda-message" role="status">Cargando agenda…</p>
         )}
         {agenda.status === "error" && (
-          <div className="agenda-message">
-            <p role="alert">No se pudo cargar la agenda.</p>
-            <button
-              className="text-button"
-              onClick={() => {
-                setAgenda({ status: "loading" })
-                setAttempt((previous) => previous + 1)
-              }}
-              type="button"
-            >
-              Volver a intentar
-            </button>
-          </div>
+          <AgendaError message="No se pudo cargar la agenda." retry={retry} />
         )}
         {agenda.status === "ready" && agenda.events.length === 0 && (
           <p className="agenda-message" role="status">No hay eventos publicados.</p>
         )}
         {agenda.status === "ready" && agenda.events.map((event) => (
           <EditorialCard
-            alt={event.image?.alt ?? ""}
+            alt={event.cover?.alt ?? ""}
             description={event.description}
-            image={event.image ? `${agendaPath}${event.image.filename}` : undefined}
+            image={event.cover ? eventImageSrc(event.cover) : undefined}
             key={event.id}
             kicker="EVENTO"
             title={event.title}
             footer={
               <>
-                {event.date ? (
-                  <time className="date-block" dateTime={event.date}>
-                    <strong>{dateFormatter.format(new Date(event.date)).toLocaleUpperCase("es-ES")}</strong>
-                    {!dateOnly.test(event.date) && (
-                      <span>{timeFormatter.format(new Date(event.date))} H</span>
-                    )}
-                  </time>
-                ) : (
-                  <div className="date-block"><strong>FECHA POR CONFIRMAR</strong></div>
-                )}
-                {event.url && (
-                  <a
-                    aria-label={`Ver ${event.title} (abre en otra pestaña)`}
-                    className="arrow-button"
-                    href={event.url}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    <ArrowIcon />
-                  </a>
-                )}
+                <EventDate date={event.date} />
+                <a aria-label={`Ver ${event.title}`} className="arrow-button" href={eventHref(event.id)}>
+                  <ArrowIcon />
+                </a>
               </>
             }
           />
         ))}
       </div>
+    </main>
+  )
+}
+
+function EventDetail() {
+  const { agenda, retry } = useAgenda()
+  const id = new URLSearchParams(window.location.search).get("id")
+  const event = agenda.status === "ready" ? agenda.events.find((entry) => entry.id === id) : undefined
+
+  useEffect(() => {
+    if (event) document.title = `${event.title} — OUT THE BOX`
+  }, [event])
+
+  return (
+    <main className="page-shell event-page">
+      <a className="primary-button event-back" href={siteRoot.href}>
+        <ArrowIcon /> Volver a la agenda
+      </a>
+      {id && agenda.status === "loading" && (
+        <p className="agenda-message" role="status">Cargando evento…</p>
+      )}
+      {id && agenda.status === "error" && (
+        <AgendaError message="No se pudo cargar el evento." retry={retry} />
+      )}
+      {(!id || (agenda.status === "ready" && !event)) && (
+        <h1 className="event-title">Evento no encontrado</h1>
+      )}
+      {event && (
+        <article className="event-article">
+          <header className="event-heading">
+            <p className="eyebrow">EVENTO</p>
+            <h1 className="event-title">{event.title}</h1>
+            <EventDate date={event.date} />
+          </header>
+          <div className="event-content">
+            {event.content && (
+              <Markdown
+                remarkPlugins={[remarkGfm]}
+                skipHtml
+                components={{
+                  h1: ({ children }) => <h2>{children}</h2>,
+                  img: ({ src, alt, title }) => src
+                    ? <img alt={alt ?? ""} loading="lazy" referrerPolicy="no-referrer" src={src} title={title} />
+                    : alt || null,
+                }}
+              >
+                {event.content}
+              </Markdown>
+            )}
+            {event.attachments.map((image) => (
+              <figure key={image.src}>
+                <img alt={image.alt} loading="lazy" referrerPolicy="no-referrer" src={eventImageSrc(image)} />
+              </figure>
+            ))}
+            {!event.content && event.attachments.length === 0 && (
+              <p>Este evento aún no tiene contenido publicado.</p>
+            )}
+          </div>
+        </article>
+      )}
     </main>
   )
 }
@@ -647,7 +731,10 @@ function Footer({ setPage }: { setPage: (page: Page) => void }) {
 }
 
 export default function App() {
-  const [page, setPage] = useState<Page>("agenda")
+  const [page, setPage] = useState<Page>(() => {
+    const section = new URLSearchParams(window.location.search).get("seccion")
+    return !isEventPage && (section === "espacios" || section === "contacto") ? section : "agenda"
+  })
   const [loginOpen, setLoginOpen] = useState(false)
   const [dark, setDark] = useState(
     () => localStorage.getItem("otb-theme") === "dark",
@@ -658,6 +745,16 @@ export default function App() {
     localStorage.setItem("otb-theme", dark ? "dark" : "light")
   }, [dark])
 
+  function navigate(nextPage: Page) {
+    if (isEventPage) {
+      const url = new URL(siteRoot)
+      if (nextPage !== "agenda") url.searchParams.set("seccion", nextPage)
+      window.location.assign(url)
+    } else {
+      setPage(nextPage)
+    }
+  }
+
   return (
     <div className="app">
       <Header
@@ -665,14 +762,18 @@ export default function App() {
         openLogin={() => setLoginOpen(true)}
         page={page}
         setDark={setDark}
-        setPage={setPage}
+        setPage={navigate}
       />
-      {page === "agenda" && <Agenda />}
-      {page === "espacios" && <Espacios />}
-      {page === "contacto" && <Contacto />}
+      {isEventPage ? <EventDetail /> : (
+        <>
+          {page === "agenda" && <Agenda />}
+          {page === "espacios" && <Espacios />}
+          {page === "contacto" && <Contacto />}
+        </>
+      )}
       <Footer
         setPage={(nextPage) => {
-          setPage(nextPage)
+          navigate(nextPage)
           window.scrollTo({ behavior: "smooth", top: 0 })
         }}
       />
