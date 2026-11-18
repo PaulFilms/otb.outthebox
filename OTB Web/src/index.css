@@ -333,7 +333,7 @@ a {
 }
 
 .event-content blockquote {
-  border-inline-start: 3px solid var(--accent);
+  border-inline-start: 3px solid var(--entry-accent, var(--accent));
   padding-inline-start: 1em;
   color: var(--muted);
 }
@@ -348,6 +348,32 @@ a {
   overflow-x: auto;
   padding: .75em;
   background: var(--surface);
+}
+
+.streaming-player {
+  max-width: 660px;
+}
+
+.streaming-player iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+}
+
+.streaming-player figcaption {
+  margin-top: .5em;
+  font-size: .85em;
+}
+
+[data-tone='release'] {
+  --entry-accent: #1d50d7;
+  --cover-ink: #fff;
+}
+
+:root[data-theme='dark'] [data-tone='release'] {
+  --entry-accent: #84a5ff;
+  --cover-ink: #11110f;
 }
 
 .editorial-card {
@@ -373,8 +399,8 @@ a {
   place-content: center;
   height: 100%;
   min-height: inherit;
-  background: var(--accent);
-  color: #11110f;
+  background: var(--entry-accent, var(--accent));
+  color: var(--cover-ink, #11110f);
   font-family: 'Archivo Black', sans-serif;
   font-size: clamp(44px, 6vw, 82px);
   letter-spacing: -.08em;
@@ -405,7 +431,7 @@ a {
 
 .eyebrow {
   margin: 0;
-  color: var(--accent);
+  color: var(--entry-accent, var(--accent));
   font-size: 10px;
   font-weight: 700;
   letter-spacing: .14em;

@@ -1,6 +1,7 @@
 import { type FormEvent, type ReactNode, useEffect, useState } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
+import { StreamingBlock } from "./StreamingBlock"
 
 type Page = "agenda" | "espacios" | "contacto"
 type IconProps = { size?: number; strokeWidth?: number }
@@ -15,6 +16,7 @@ type EventImage = { src: string; alt: string }
 
 type AgendaEvent = {
   id: string
+  type: "EVENTO" | "LANZAMIENTO"
   title: string
   description: string
   date: string | null
@@ -304,6 +306,7 @@ type EditorialCardProps = {
   title: string
   description: string
   footer: ReactNode
+  tone?: "release"
 }
 
 function EditorialCard({
@@ -313,11 +316,12 @@ function EditorialCard({
   title,
   description,
   footer,
+  tone,
 }: EditorialCardProps) {
   const [imageFailed, setImageFailed] = useState(false)
 
   return (
-    <article className="editorial-card">
+    <article className="editorial-card" data-tone={tone}>
       <div className="card-image-wrap">
         {image && !imageFailed ? (
           <img
@@ -435,7 +439,7 @@ function Agenda() {
           <AgendaError message="No se pudo cargar la agenda." retry={retry} />
         )}
         {agenda.status === "ready" && agenda.events.length === 0 && (
-          <p className="agenda-message" role="status">No hay eventos publicados.</p>
+          <p className="agenda-message" role="status">No hay entradas publicadas.</p>
         )}
         {agenda.status === "ready" && agenda.events.map((event) => (
           <EditorialCard
@@ -443,8 +447,9 @@ function Agenda() {
             description={event.description}
             image={event.cover ? eventImageSrc(event.cover) : undefined}
             key={event.id}
-            kicker="EVENTO"
+            kicker={event.type === "LANZAMIENTO" ? "LANZAMIENTO" : "EVENTO"}
             title={event.title}
+            tone={event.type === "LANZAMIENTO" ? "release" : undefined}
             footer={
               <>
                 <EventDate date={event.date} />
@@ -475,18 +480,18 @@ function EventDetail() {
         <ArrowIcon /> Volver a la agenda
       </a>
       {id && agenda.status === "loading" && (
-        <p className="agenda-message" role="status">Cargando evento…</p>
+        <p className="agenda-message" role="status">Cargando entrada…</p>
       )}
       {id && agenda.status === "error" && (
-        <AgendaError message="No se pudo cargar el evento." retry={retry} />
+        <AgendaError message="No se pudo cargar la entrada." retry={retry} />
       )}
       {(!id || (agenda.status === "ready" && !event)) && (
-        <h1 className="event-title">Evento no encontrado</h1>
+        <h1 className="event-title">Entrada no encontrada</h1>
       )}
       {event && (
-        <article className="event-article">
+        <article className="event-article" data-tone={event.type === "LANZAMIENTO" ? "release" : undefined}>
           <header className="event-heading">
-            <p className="eyebrow">EVENTO</p>
+            <p className="eyebrow">{event.type === "LANZAMIENTO" ? "LANZAMIENTO" : "EVENTO"}</p>
             <h1 className="event-title">{event.title}</h1>
             <EventDate date={event.date} />
           </header>
@@ -497,6 +502,7 @@ function EventDetail() {
                 skipHtml
                 components={{
                   h1: ({ children }) => <h2>{children}</h2>,
+                  pre: StreamingBlock,
                   img: ({ src, alt, title }) => src
                     ? <img alt={alt ?? ""} loading="lazy" referrerPolicy="no-referrer" src={src} title={title} />
                     : alt || null,
@@ -511,7 +517,7 @@ function EventDetail() {
               </figure>
             ))}
             {!event.content && event.attachments.length === 0 && (
-              <p>Este evento aún no tiene contenido publicado.</p>
+              <p>Esta entrada aún no tiene contenido publicado.</p>
             )}
           </div>
         </article>

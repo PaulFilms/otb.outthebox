@@ -127,15 +127,16 @@ async function syncAgenda() {
   const imageCache = new Map()
   const currentImages = new Set()
   for (const entry of data.entradas) {
-    if (entry?.tipo !== "EVENTO") continue
+    if (entry?.tipo !== "EVENTO" && entry?.tipo !== "LANZAMIENTO") continue
     if (typeof entry.id !== "string" || typeof entry.nombre !== "string" || !entry.nombre.trim()) {
-      throw new Error("Supabase devolvió un evento sin identificador o título.")
+      throw new Error("Supabase devolvió una entrada sin identificador o título.")
     }
     const date = typeof entry.fecha === "string" && Number.isFinite(Date.parse(entry.fecha))
       ? entry.fecha
       : null
     events.push({
       id: entry.id,
+      type: entry.tipo,
       title: entry.nombre.trim(),
       description: typeof entry.info === "string" ? entry.info.trim() : "",
       date,
@@ -151,7 +152,7 @@ async function syncAgenda() {
     }
   }
   await writeFile(new URL("events.json", output), JSON.stringify(events))
-  console.log(`Agenda: ${events.length} eventos sincronizados.`)
+  console.log(`Agenda: ${events.length} entradas sincronizadas.`)
 }
 
 try {

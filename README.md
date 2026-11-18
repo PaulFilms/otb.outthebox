@@ -1,6 +1,10 @@
 # OUT THE BOX
 
-La web usa el diseño exportado de Figma Make en [OTB Web](./OTB%20Web). La Agenda consulta la función `notion_entradas` de Supabase con la misma petición que [supa_test.js](./supa_test.js), publica solo las entradas `EVENTO` y las ordena de la fecha más reciente a la más antigua. Cada ficha tiene una página `/evento/?id=…` que admite enlaces directos y muestra el contenido Markdown con sus imágenes y enlaces. Espacios, Contacto y Acceder conservan el prototipo; no están conectados a la API.
+La web usa el diseño exportado de Figma Make en [OTB Web](./OTB%20Web). La Agenda consulta la función `notion_entradas` de Supabase con la misma petición que [supa_test.js](./supa_test.js), publica las entradas `EVENTO` (rojo) y `LANZAMIENTO` (azul) y las ordena de la fecha más reciente a la más antigua. Cada ficha tiene una página `/evento/?id=…` que admite enlaces directos y muestra el contenido Markdown con sus imágenes y enlaces. Espacios, Contacto y Acceder conservan el prototipo; no están conectados a la API.
+
+## Reproductores en Notion
+
+Usa **Compartir → Insertar** en Apple Music, Spotify o YouTube y pega solo el `<iframe>…</iframe>` en un bloque de código de Notion con el lenguaje **HTML**. La ficha genera su propio iframe: utiliza la URL HTTPS de inserción y la altura del original, pero no aplica atributos HTML de Notion como `style`, `allow` o `sandbox`. Un reproductor no admitido muestra un aviso; el resto del HTML no se ejecuta. Para otros servicios, usa un enlace normal en el texto.
 
 ## Desarrollo local
 
@@ -22,4 +26,4 @@ pnpm dev
 4. El workflow **Publicar web en GitHub Pages** se ejecuta tras un push a `main` y cada día a las **05:15, hora de Madrid**. Los cambios en Notion se publican en la siguiente ejecución correcta, sin necesidad de un commit. GitHub puede retrasar la ejecución programada.
 5. Si necesitas publicar un cambio antes, ve a **Actions → Publicar web en GitHub Pages → Run workflow** y selecciona `main`. Usa una ejecución nueva, no **Re-run jobs** de un despliegue antiguo: eso volvería a usar el commit anterior.
 
-La función de Supabase solo se consulta durante la compilación: Pages sirve una copia estática de las fichas y no recibe la clave. Si falla la consulta, el despliegue se detiene y se conserva la web publicada. Las imágenes de Notion admitidas se copian al compilar para no depender de URLs firmadas que caducan durante la visita. Si no hay imagen de portada disponible se muestra una portada tipográfica de OTB. La Agenda es pública: publica en el origen solo eventos que puedan aparecer en la web.
+La función de Supabase solo se consulta durante la compilación: Pages sirve una copia estática de las fichas y no recibe la clave. Si falla la consulta, el despliegue se detiene y se conserva la web publicada. Las imágenes de Notion admitidas se copian al compilar para no depender de URLs firmadas que caducan durante la visita. Si no hay imagen de portada disponible se muestra una portada tipográfica de OTB en el color de la entrada. La Agenda es pública: incluye en el origen solo entradas que puedan aparecer en la web.
