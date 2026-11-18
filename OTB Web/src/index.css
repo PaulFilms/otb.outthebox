@@ -120,7 +120,7 @@ a {
 }
 
 .nav-link,
-.footer-nav button {
+.footer-nav a {
   padding: 8px 0;
   border: 0;
   background: transparent;
@@ -445,6 +445,11 @@ a {
   line-height: 1;
 }
 
+.entry-link:is(:hover, :focus-visible) {
+  text-decoration: underline;
+  text-underline-offset: .15em;
+}
+
 .card-description {
   max-width: 650px;
   margin: 0 34px 20px 0;
@@ -626,7 +631,7 @@ textarea::placeholder {
   justify-content: flex-end;
 }
 
-.footer-nav button {
+.footer-nav a {
   color: var(--bg);
 }
 

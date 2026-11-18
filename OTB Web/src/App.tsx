@@ -129,6 +129,7 @@ function MoonIcon({ size = 20, strokeWidth = 1.8 }: IconProps) {
   )
 }
 
+/* Acceso desactivado temporalmente.
 function UserIcon({ size = 20, strokeWidth = 1.8 }: IconProps) {
   return (
     <svg
@@ -154,6 +155,7 @@ function UserIcon({ size = 20, strokeWidth = 1.8 }: IconProps) {
     </svg>
   )
 }
+*/
 
 function ArrowIcon({ size = 20, strokeWidth = 1.8 }: IconProps) {
   return (
@@ -245,34 +247,24 @@ function Logo() {
       type="button"
       aria-label="OTB — inicio"
     >
-      <img src={rotativeGif} alt="" style={{ height: "1.2em", verticalAlign: "middle" }} />
-      <span>OUT</span>
+      <img src={rotativeGif} alt="" style={{ height: "4.4em", verticalAlign: "middle" }} />
+      {/* <span>OUT</span>
       <span className="logo-outline">THE</span>
-      <span>BOX</span>
+      <span>BOX</span> */}
     </button>
   )
 }
 
 function Header({
   page,
-  setPage,
   dark,
   setDark,
-  openLogin,
 }: {
   page: Page
-  setPage: (page: Page) => void
   dark: boolean
   setDark: (value: boolean) => void
-  openLogin: () => void
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
-
-  const navigate = (nextPage: Page) => {
-    setPage(nextPage)
-    setMenuOpen(false)
-    window.scrollTo({ behavior: "smooth", top: 0 })
-  }
 
   return (
     <header className="site-header">
@@ -282,16 +274,13 @@ function Header({
           aria-label="Navegación principal"
           className={menuOpen ? "main-nav open" : "main-nav"}
         >
-          {(["agenda", "espacios", "contacto"] as Page[]).map((item) => (
-            <button
-              className={page === item ? "nav-link active" : "nav-link"}
-              key={item}
-              onClick={() => navigate(item)}
-              type="button"
-            >
-              {item}
-            </button>
-          ))}
+          <a
+            aria-current={page === "agenda" && !isEventPage ? "page" : undefined}
+            className={page === "agenda" ? "nav-link active" : "nav-link"}
+            href={siteRoot.href}
+          >
+            Agenda
+          </a>
         </nav>
         <div className="header-actions">
           <button
@@ -302,10 +291,10 @@ function Header({
           >
             {dark ? <SunIcon /> : <MoonIcon />}
           </button>
-          <button className="login-button" onClick={openLogin} type="button">
+          {/* <button className="login-button" onClick={openLogin} type="button">
             <UserIcon size={18} />
             <span>Acceder</span>
-          </button>
+          </button> */}
           <button
             aria-expanded={menuOpen}
             aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
@@ -326,6 +315,7 @@ type EditorialCardProps = {
   alt: string
   kicker: string
   title: string
+  titleHref?: string
   description: string
   footer: ReactNode
   tone?: "release"
@@ -336,6 +326,7 @@ function EditorialCard({
   alt,
   kicker,
   title,
+  titleHref,
   description,
   footer,
   tone,
@@ -362,7 +353,7 @@ function EditorialCard({
       </div>
       <div className="card-copy">
         <p className="eyebrow">{kicker}</p>
-        <h2>{title}</h2>
+        <h2>{titleHref ? <a className="entry-link" href={titleHref}>{title}</a> : title}</h2>
         {description && <p className="card-description">{description}</p>}
         <div className="card-footer">{footer}</div>
       </div>
@@ -471,10 +462,13 @@ function Agenda() {
             key={event.id}
             kicker={event.type === "LANZAMIENTO" ? "LANZAMIENTO" : "EVENTO"}
             title={event.title}
+            titleHref={eventHref(event.id)}
             tone={event.type === "LANZAMIENTO" ? "release" : undefined}
             footer={
               <>
-                <EventDate date={event.date} />
+                <a className="entry-link" href={eventHref(event.id)}>
+                  <EventDate date={event.date} />
+                </a>
                 <a aria-label={`Ver ${event.title}`} className="arrow-button" href={eventHref(event.id)}>
                   <ArrowIcon />
                 </a>
@@ -655,6 +649,7 @@ function Contacto() {
   )
 }
 
+/* Acceso desactivado temporalmente.
 function LoginModal({ close }: { close: () => void }) {
   const [success, setSuccess] = useState(false)
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -738,8 +733,9 @@ function LoginModal({ close }: { close: () => void }) {
     </div>
   )
 }
+*/
 
-function Footer({ setPage }: { setPage: (page: Page) => void }) {
+function Footer() {
   return (
     <footer className="site-footer">
       <div className="footer-statement">
@@ -748,22 +744,16 @@ function Footer({ setPage }: { setPage: (page: Page) => void }) {
         <strong>SAL DE LA CAJA !</strong>
       </div>
       <div className="footer-nav">
-        {(["agenda", "espacios", "contacto"] as Page[]).map((item) => (
-          <button key={item} onClick={() => setPage(item)} type="button">
-            {item}
-          </button>
-        ))}
+        <a href={siteRoot.href}>Agenda</a>
       </div>
     </footer>
   )
 }
 
 export default function App() {
-  const [page, setPage] = useState<Page>(() => {
-    const section = new URLSearchParams(window.location.search).get("seccion")
-    return !isEventPage && (section === "espacios" || section === "contacto") ? section : "agenda"
-  })
-  const [loginOpen, setLoginOpen] = useState(false)
+  const section = new URLSearchParams(window.location.search).get("seccion")
+  const page: Page = !isEventPage && (section === "espacios" || section === "contacto") ? section : "agenda"
+  // const [loginOpen, setLoginOpen] = useState(false)
   const [dark, setDark] = useState(
     () => localStorage.getItem("otb-theme") === "dark",
   )
@@ -773,24 +763,12 @@ export default function App() {
     localStorage.setItem("otb-theme", dark ? "dark" : "light")
   }, [dark])
 
-  function navigate(nextPage: Page) {
-    if (isEventPage) {
-      const url = new URL(siteRoot)
-      if (nextPage !== "agenda") url.searchParams.set("seccion", nextPage)
-      window.location.assign(url)
-    } else {
-      setPage(nextPage)
-    }
-  }
-
   return (
     <div className="app">
       <Header
         dark={dark}
-        openLogin={() => setLoginOpen(true)}
         page={page}
         setDark={setDark}
-        setPage={navigate}
       />
       {isEventPage ? <EventDetail /> : (
         <>
@@ -799,13 +777,8 @@ export default function App() {
           {page === "contacto" && <Contacto />}
         </>
       )}
-      <Footer
-        setPage={(nextPage) => {
-          navigate(nextPage)
-          window.scrollTo({ behavior: "smooth", top: 0 })
-        }}
-      />
-      {loginOpen && <LoginModal close={() => setLoginOpen(false)} />}
+      <Footer />
+      {/* {loginOpen && <LoginModal close={() => setLoginOpen(false)} />} */}
     </div>
   )
 }
