@@ -3,6 +3,9 @@ name: Publicar web en GitHub Pages
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '15 5 * * *'
+      timezone: Europe/Madrid
   workflow_dispatch:
 
 permissions:
