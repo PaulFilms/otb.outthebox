@@ -215,27 +215,6 @@ function CloseIcon({ size = 22, strokeWidth = 1.8 }: IconProps) {
   )
 }
 
-// BUG: quitar
-import rotativeGif from "./rotative.gif"
-
-// function Logo() {
-//   return (
-//     <button
-//       className="logo"
-//       onClick={() => {
-//         if (isEventPage) window.location.assign(siteRoot)
-//         else window.scrollTo({ behavior: "smooth", top: 0 })
-//       }}
-//       type="button"
-//       aria-label="OTB — inicio"
-//     >
-//       <span>OUT</span>
-//       <span className="logo-outline">THE</span>
-//       <span>BOX</span>
-//     </button>
-//   )
-// }
-
 function Logo() {
   return (
     <button
@@ -247,14 +226,9 @@ function Logo() {
       type="button"
       aria-label="OTB — inicio"
     >
-    <img
-      src={rotativeGif}
-      alt=""
-      style={{ height: "2.2em", width: "auto", flexShrink: 0, verticalAlign: "middle" }}
-    />
-      {/* <span>OUT</span>
+      <span>OUT</span>
       <span className="logo-outline">THE</span>
-      <span>BOX</span> */}
+      <span>BOX</span>
     </button>
   )
 }
