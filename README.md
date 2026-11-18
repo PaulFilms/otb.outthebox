@@ -29,3 +29,10 @@ pnpm dev
 5. Si necesitas publicar un cambio antes, ve a **Actions → Publicar web en GitHub Pages → Run workflow** y selecciona `main`. Usa una ejecución nueva, no **Re-run jobs** de un despliegue antiguo: eso volvería a usar el commit anterior.
 
 La función de Supabase solo se consulta durante la compilación: Pages sirve una copia estática de las fichas y no recibe la clave. Si falla la consulta, el despliegue se detiene y se conserva la web publicada. Las imágenes de Notion admitidas se copian al compilar para no depender de URLs firmadas que caducan durante la visita. Si no hay imagen de portada disponible se muestra una portada tipográfica de OTB en el color de la entrada. La Agenda es pública: incluye en el origen solo entradas que puedan aparecer en la web.
+
+## ⚠ En desarrollo
+
+Dejo comentadas las secciones de Espacios y Contacto
+Podemos entrar manualmente desde:
+https://paulfilms.github.io/otb.outthebox/?seccion=espacios
+https://paulfilms.github.io/otb.outthebox/?seccion=contacto
